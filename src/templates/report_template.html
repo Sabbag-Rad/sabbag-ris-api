@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Informe Médico</title>
+    <style>
+      body {
+        font-family: "Helvetica", sans-serif;
+        font-size: 12pt;
+        margin: 40px;
+      }
+      .header {
+        text-align: center;
+        border-bottom: 1px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .footer {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 10pt;
+        border-top: 1px solid #000;
+        padding-top: 5px;
+      }
+      h1 {
+        font-size: 16pt;
+        margin: 0;
+      }
+      h2 {
+        font-size: 14pt;
+        margin-top: 20px;
+      }
+      .section {
+        margin-bottom: 15px;
+      }
+      .label {
+        font-weight: bold;
+        display: inline-block;
+        width: 180px;
+      }
+      .content {
+        display: inline-block;
+      }
+      .report-content {
+        margin-top: 10px;
+        white-space: pre-wrap;
+        text-align: justify;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <!-- Puedes insertar un logo aquí si lo deseas -->
+      <h1>Informe Médico</h1>
+      <p>Institución de Salud Radiológica</p>
+    </div>
+
+    <div class="section">
+      <div>
+        <span class="label">Paciente:</span>
+        <span class="content">{{ report.patient.name }}</span>
+      </div>
+      <div>
+        <span class="label">Documento:</span>
+        <span class="content"
+          >{{ report.patient.document_type.abbreviation }} {{
+          report.patient.document }}</span
+        >
+      </div>
+      <div>
+        <span class="label">Edad:</span>
+        <span class="content">{{ report.patient.age or "No disponible" }}</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div>
+        <span class="label">Número de estudio:</span>
+        <span class="content">{{ report.study_number }}</span>
+      </div>
+      <div>
+        <span class="label">Servicio:</span>
+        <span class="content">{{ report.service }}</span>
+      </div>
+      <div>
+        <span class="label">Fecha:</span>
+        <span class="content">{{ report.date }}</span>
+      </div>
+      <div>
+        <span class="label">Médico solicitante:</span>
+        <span class="content">{{ report.referring_physician }}</span>
+      </div>
+    </div>
+
+    <h2>Contenido del Informe</h2>
+    <div class="report-content">{{ report.report_content | safe }}</div>
+
+    <h2>Contenido del Informe</h2>
+    <div class="report-content">{{ report.report_content | safe }}</div>
+
+    <div class="section" style="margin-top: 25px">
+      <div>
+        <span class="label">Médico Interpretador:</span>
+        <span class="content"
+          >{{ report.interpreting_physician.name }} (CRM: {{
+          report.interpreting_physician.crm }})</span
+        >
+      </div>
+      {% if report.reviewing_physician.name %}
+      <div>
+        <span class="label">Médico Revisor:</span>
+        <span class="content"
+          >{{ report.reviewing_physician.name }} (CRM: {{
+          report.reviewing_physician.crm }})</span
+        >
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="footer">
+      © {{ report.date.split("-")[0] }} | Instituto Radiológico - Todos los
+      derechos reservados
+    </div>
+  </body>
+</html>

@@ -1,12 +1,15 @@
 from src.config.db import get_db_connection
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def get_patient_studies(patient_id, filters=None, limit=10, offset=0):
+def get_studies_by_patient_id(patient_id, filters=None, limit=10, offset=0):
     query = """
         SELECT 
             ex.os_exame AS study_number,
             ex.data AS date,
-            m.codigo AS modality_code,
+            m.codigo AS modality_id,
             m.descricao AS modality_name,
             s.id_serv AS service_id,
             s.desc_serv AS service_name
@@ -64,10 +67,19 @@ def get_patient_studies(patient_id, filters=None, limit=10, offset=0):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(query, params)
-            return cur.fetchall()
+
+            studies = cur.fetchall()
+
+            if studies:
+                logger.debug(f"[Repository] studies found for ID {patient_id}")
+                columns = [desc[0] for desc in cur.description]
+                return [dict(zip(columns, row)) for row in studies]
+            else:
+                logger.warning(f"[Repository] No studies found for ID {patient_id}")
+                return None
 
 
-def count_patient_studies(patient_id, filters=None):
+def count_studies_by_patient_id(patient_id, filters=None):
     query = """
         SELECT COUNT(*)
         FROM mediclinic.exames ex

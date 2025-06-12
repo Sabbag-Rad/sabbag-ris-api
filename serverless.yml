@@ -39,6 +39,7 @@ provider:
     REDIS_HOST: ${env:REDIS_HOST}
     REDIS_PORT: ${env:REDIS_PORT}
     REDIS_IDENTIFIER: ${env:REDIS_IDENTIFIER}
+    DICOM_URL: ${env:DICOM_URL}
 
   iamRoleStatements:
     - Effect: Allow
@@ -53,6 +54,13 @@ provider:
         - logs:PutLogEvents
       Resource: "*"
 
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:PutObjectAcl
+      Resource: arn:aws:s3:::sabbag-pdr-bucket-dev/*
+
 package:
   patterns:
     - "!**"
@@ -60,51 +68,44 @@ package:
     - "requirements.txt"
 
 functions:
-  loginPaciente:
-    handler: src/handlers/login_patient.lambda_handler
-    events:
-      - httpApi:
-          path: /login/patient
-          method: post
-
-  loginUser:
-    handler: src/handlers/login_user.lambda_handler
-    events:
-      - httpApi:
-          path: /login/user
-          method: post
-
-  patientPasswordRecoveryOptions:
-    handler: src/handlers/patient_password_recovery_options.lambda_handler
-    events:
-      - httpApi:
-          path: /patient/recovery/options
-          method: post
-
-  patientPasswordRecoveryRequest:
-    handler: src/handlers/patient_password_recovery_request.lambda_handler
-    events:
-      - httpApi:
-          path: /patient/recovery/request
-          method: post
-
-  patientPasswordRecoveryVerify:
-    handler: src/handlers/patient_password_recovery_verify.lambda_handler
-    events:
-      - httpApi:
-          path: /patient/recovery/verify
-          method: post
-
-  patientPasswordRecoveryReset:
-    handler: src/handlers/patient_password_recovery_reset.lambda_handler
-    events:
-      - httpApi:
-          path: /patient/recovery/reset
-          method: post
-
-  list_patient_studies:
-    handler: src/handlers/list_patient_studies.lambda_handler
+  get_studies:
+    handler: src/handlers/get_studies_handler.lambda_handler
     events:
       - httpApi:
           path: /studies/{patient_id}
           method: get
+
+  get_report:
+    handler: src/handlers/get_report_handler.lambda_handler
+    events:
+      - httpApi:
+          path: /report/{report_id}
+          method: get
+
+  get_dicom:
+    handler: src/handlers/get_dicom_url_handler.lambda_handler
+    events:
+      - httpApi:
+          path: /dicom
+          method: post
+
+  otp_options:
+    handler: src/handlers/otp_handlers.otp_options_handler
+    events:
+      - httpApi:
+          path: /recovery/options
+          method: post
+
+  otp_request:
+    handler: src/handlers/otp_handlers.otp_request_handler
+    events:
+      - httpApi:
+          path: /recovery/request
+          method: post
+
+  otp_verify:
+    handler: src/handlers/otp_handlers.otp_verify_handler
+    events:
+      - httpApi:
+          path: /recovery/verify
+          method: post
