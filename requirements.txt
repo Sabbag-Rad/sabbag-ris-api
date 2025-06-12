@@ -3,3 +3,6 @@ psycopg2-binary
 pydantic
 pyJWT
 redis
+jinja2
+xhtml2pdf
+striprtf
