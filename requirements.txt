@@ -6,3 +6,4 @@ redis
 jinja2
 xhtml2pdf
 striprtf
+pytest

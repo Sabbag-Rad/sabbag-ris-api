@@ -1,7 +1,7 @@
 import os
 import logging
-from src.services.pdf_service import render_report_html, generate_pdf_from_html
-from src.services.s3_service import upload_pdf_to_s3
+from src.common.utils.pdf_utils import render_report_html, generate_pdf_from_html
+from src.common.aws.s3_utils import upload_pdf_to_s3
 from src.repositories.report_repository import get_report_by_id
 from src.schemas.report_schemas import ReportSchema
 from src.common.utils.rtf2text import convert_rtf_to_text

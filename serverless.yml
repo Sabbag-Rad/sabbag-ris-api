@@ -26,6 +26,7 @@ custom:
       - six
       - urllib3
       - wheel
+      - pytest
 
 provider:
   name: aws
@@ -103,29 +104,29 @@ functions:
           path: /auth/patient/login
           method: post
 
-    password_reset:
-      handler: src/handlers/password_reset_handler.lambda_handler
-      events:
-        - httpApi:
-            path: /recovery/reset
-            method: post
+  recovery_reset:
+    handler: src/handlers/recovery_handlers.reset_password_handler
+    events:
+      - httpApi:
+          path: /recovery/reset
+          method: post
 
-  otp_options:
-    handler: src/handlers/otp_handlers.otp_options_handler
+  recovery_options:
+    handler: src/handlers/recovery_handlers.recovery_options_handler
     events:
       - httpApi:
           path: /recovery/options
           method: post
 
-  otp_request:
-    handler: src/handlers/otp_handlers.otp_request_handler
+  recovery_request:
+    handler: src/handlers/recovery_handlers.recovery_request_handler
     events:
       - httpApi:
           path: /recovery/request
           method: post
 
-  otp_verify:
-    handler: src/handlers/otp_handlers.otp_verify_handler
+  recovery_verify:
+    handler: src/handlers/recovery_handlers.recovery_verify_handler
     events:
       - httpApi:
           path: /recovery/verify
