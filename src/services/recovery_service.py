@@ -8,8 +8,9 @@ from src.common.utils.otp_utils import (
     store_otp,
     validate_otp,
     clear_otp,
-    get_otp,
 )
+from src.common.aws.sns_utils import send_sms
+from src.common.aws.ses_utils import send_email
 from src.common.auth.jwt import create_jwt_token
 from src.common.utils.masking import mask_email, mask_phone
 
@@ -44,8 +45,18 @@ def send_recovery_otp(document_type: str, document: str, recovery_method: str):
 
     if recovery_method == "email":
         logger.info(f"Send OTP {otp} to email {patient['email']}")
+        send_email(
+            recipient="mpuche10@gmail.com",
+            subject="Código de Verificación",
+            body_text=f"Tu código OTP es: {otp}",
+            body_html=f"<p>Tu código OTP es: <strong>{otp}</strong></p>",
+        )
     elif recovery_method == "phone":
-        logger.info(f"Send OTP {otp} to phone {patient['phone1'] or patient['phone2']}")
+        logger.info(f"Send OTP {otp} to phone {patient['phone1']}")
+        send_sms(
+            phone_number=patient["phone1"],
+            message=f"Your OTP for password recovery is: {otp}",
+        )
 
     return {"message": f"OTP sent via {recovery_method}"}
 

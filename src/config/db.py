@@ -1,6 +1,6 @@
 import psycopg2
 from contextlib import contextmanager
-from common.aws.secret_utils import get_db_secret
+from src.common.aws.secret_utils import get_db_secret
 
 
 @contextmanager
