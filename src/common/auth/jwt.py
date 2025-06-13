@@ -2,6 +2,7 @@ import jwt
 import os
 import datetime
 import logging
+from src.common.utils.exceptions import UnauthorizedError
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -22,22 +23,26 @@ def create_jwt_token(data: dict, expires_in_minutes: int = DEFAULT_EXP_MINUTES):
     exp = now + datetime.timedelta(minutes=minutes)
     payload = {**data, "iat": now, "exp": exp}
 
-    logger.info(f"JWT Payload: {payload}")
+    logger.debug(f"[JWT] Payload to encode: {payload}")
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-    logger.info(f"Generated JWT Token: {token}")
-
+    logger.info("[JWT] Token generado correctamente")
     return token
 
 
 def decode_jwt_token(token: str):
-    
     if not token or len(token.split(".")) != 3:
-        raise Exception("Token format invalid")
+        logger.warning("[JWT] Token mal formado")
+        raise UnauthorizedError("Token mal formado")
+
     try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        logger.info("[JWT] Token decodificado correctamente")
+        return payload
     except jwt.ExpiredSignatureError:
-        raise Exception("Token expired")
-    except jwt.InvalidTokenError:
-        raise Exception("Invalid token")
+        logger.warning("[JWT] Token expirado")
+        raise UnauthorizedError("Token expirado")
+    except jwt.InvalidTokenError as e:
+        logger.warning(f"[JWT] Token inválido: {str(e)}")
+        raise UnauthorizedError("Token inválido")

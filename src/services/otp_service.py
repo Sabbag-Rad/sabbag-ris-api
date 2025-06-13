@@ -1,11 +1,12 @@
 import random
 import os
-from src.common.cache.redis import get_redis_connection
+from src.config.redis import get_redis_connection
 
 
 r = get_redis_connection()
 
 identifier = os.environ.get("REDIS_IDENTIFIER", "sabbag")
+
 
 def generate_otp(length=6):
     return "".join(str(random.randint(0, 9)) for _ in range(length))
@@ -23,7 +24,7 @@ def get_otp(patient_id: int):
 
 def validate_otp(patient_id: int, otp: str) -> bool:
     stored_otp = get_otp(patient_id)
-    print (f"Validating OTP {otp} for patient {patient_id}, stored OTP: {stored_otp}")
+    print(f"Validating OTP {otp} for patient {patient_id}, stored OTP: {stored_otp}")
     return stored_otp == otp
 
 

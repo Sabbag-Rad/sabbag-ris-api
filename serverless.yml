@@ -89,6 +89,27 @@ functions:
           path: /dicom
           method: post
 
+  login_user:
+    handler: src/handlers/login_user_handler.lambda_handler
+    events:
+      - httpApi:
+          path: /auth/user/login
+          method: post
+
+  login_patient:
+    handler: src/handlers/login_patient_handler.lambda_handler
+    events:
+      - httpApi:
+          path: /auth/patient/login
+          method: post
+
+    password_reset:
+      handler: src/handlers/password_reset_handler.lambda_handler
+      events:
+        - httpApi:
+            path: /recovery/reset
+            method: post
+
   otp_options:
     handler: src/handlers/otp_handlers.otp_options_handler
     events:
