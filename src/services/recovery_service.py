@@ -25,7 +25,7 @@ def get_recovery_options(document_type: str, document: str):
 
     return {
         "email": mask_email(patient["email"]),
-        "phone": mask_phone(patient.get("phone1") or patient.get("phone2")),
+        "phone": mask_phone(patient["phone1"]),
     }
 
 
@@ -37,7 +37,7 @@ def send_recovery_otp(document_type: str, document: str, recovery_method: str):
         raise ValueError("Patient not found")
 
     otp = generate_otp()
-    store_otp(patient["patient_id"], otp)
+    store_otp("password_recovery", patient["patient_id"], otp)
 
     if recovery_method not in ["email", "phone"]:
         raise ValueError("Invalid recovery method")
@@ -57,7 +57,7 @@ def verify_recovery_otp(document_type: str, document: str, otp: str):
     if not patient:
         raise ValueError("Patient not found")
 
-    if not validate_otp(patient["patient_id"], otp):
+    if not validate_otp("password_recovery", patient["patient_id"], otp):
         raise ValueError("Invalid or expired OTP")
 
     token = create_jwt_token(
@@ -69,7 +69,7 @@ def verify_recovery_otp(document_type: str, document: str, otp: str):
         expires_in_minutes=10,
     )
 
-    clear_otp(patient["patient_id"])
+    clear_otp("password_recovery", patient["patient_id"])
     return {"message": "OTP verified successfully", "token": token}
 
 
@@ -92,20 +92,12 @@ def reset_password(payload: dict):
     patient_id = patient["patient_id"]
     logger.info(f"[RecoveryService] Paciente encontrado. ID: {patient_id}")
 
-    logger.info(f"[RecoveryService] Verificando OTP para el paciente ID: {patient_id}")
-    otp = get_otp(patient_id)
-    if not otp:
-        logger.warning(
-            f"[RecoveryService] OTP no encontrado o no verificado para paciente ID: {patient_id}"
-        )
-        raise ValueError("OTP no verificado o expirado")
-
     logger.info(
         f"[RecoveryService] Actualizando contraseña para paciente ID: {patient_id}"
     )
     update_patient_password(patient_id, new_password_encrypted)
-
-    logger.info(f"[RecoveryService] Limpiando OTP para paciente ID: {patient_id}")
-    clear_otp(patient_id)
+    logger.info(
+        f"[RecoveryService] Contraseña actualizada para paciente ID: {patient_id}"
+    )
 
     return {"message": "Contraseña actualizada correctamente"}

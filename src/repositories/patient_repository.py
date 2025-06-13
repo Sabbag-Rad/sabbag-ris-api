@@ -13,7 +13,7 @@ def get_patient_by_credentials(document_type: str, document: str, password_hash:
                 SELECT id_pac AS patient_id, 
                 nm_pac AS patient_name,
                 cpf_pac AS document_number, 
-                tipo_doc1 AS document_type,
+                tipo_doc1 AS document_type
                 FROM mediclinic.pacientes
                 WHERE tipo_doc1 = %s AND cpf_pac = %s AND senhaweb = %s
             """,
@@ -44,7 +44,7 @@ def get_patient_by_document(document_type: str, document: str):
                 nm_pac AS patient_name,
                 email_pac AS email, 
                 tel1_pac AS phone1, 
-                tel2_pac AS phone2,
+                tel2_pac AS phone2
                 FROM mediclinic.pacientes
                 WHERE tipo_doc1 = %s AND cpf_pac = %s
             """,

@@ -6,23 +6,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def render_report_html(report: dict) -> str:
-    """
-    Carga y renderiza la plantilla HTML con los datos del informe.
-    Retorna un string HTML renderizado y guarda una copia en el directorio PDFs.
-    """
+def render_json_html(json: dict) -> str:
     try:
         templates_dir = os.path.join(os.path.dirname(__file__), "..", "templates")
         env = Environment(loader=FileSystemLoader(templates_dir))
         template = env.get_template("report_template.html")
 
-        rendered_html = template.render(report=report)
+        rendered_html = template.render(json=json)
         if not rendered_html:
             raise ValueError("Error al renderizar la plantilla HTML del informe")
 
-        logger.info(
-            f"[PDF Service] Report HTML rendered successfully for report ID: {report.get('study_number', 'unknown')}"
-        )
+        logger.info(f"[PDF Service] JSON HTML rendered successfully")
 
         return rendered_html
 

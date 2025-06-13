@@ -1,7 +1,7 @@
 import os
 import logging
-from src.common.utils.pdf_utils import render_report_html, generate_pdf_from_html
-from src.common.aws.s3_utils import upload_pdf_to_s3
+from src.common.utils.pdf_utils import render_json_html, generate_pdf_from_html
+from src.common.aws.s3_utils import upload_file_to_s3
 from src.repositories.report_repository import get_report_by_id
 from src.schemas.report_schemas import ReportSchema
 from src.common.utils.rtf2text import convert_rtf_to_text
@@ -71,7 +71,7 @@ def generate_report_pdf(report_id: str) -> dict:
         raise ValueError("Informe no encontrado")
 
     try:
-        html_content = render_report_html(report)
+        html_content = render_json_html(report)
         pdf_filename = f"{report_id}.pdf"
         pdf_path = f"/tmp/{pdf_filename}"
 
@@ -79,7 +79,7 @@ def generate_report_pdf(report_id: str) -> dict:
 
         bucket_name = os.environ["S3_BUCKET"]
         object_key = f"reports/{pdf_filename}"
-        pdf_url = upload_pdf_to_s3(pdf_path, bucket_name, object_key)
+        pdf_url = upload_file_to_s3(pdf_path, bucket_name, object_key)
 
     except Exception as e:
         logger.error(f"[Service] Error generating or uploading PDF: {str(e)}")
